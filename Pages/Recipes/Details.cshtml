@@ -1,0 +1,62 @@
+@page "{id:int}"
+@model NalasTable.Pages.Recipes.DetailsModel
+
+<h2>@Model.Recipe.Title</h2>
+<p>@Model.Recipe.Description</p>
+<p><strong>Instructions:</strong> @Model.Recipe.Instructions</p>
+
+<h4>Ingredients</h4>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Name</th><th>Quantity</th><th>Unit</th></tr>
+    </thead>
+    <tbody>
+    @foreach (var ing in Model.Ingredients)
+    {
+        <tr>
+            <td>@ing.Ingredient!.Name</td>
+            <td>@ing.Quantity</td>
+            <td>@(ing.UnitOverride ?? ing.Ingredient!.Unit)</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h4>Reviews</h4>
+@if (Model.Reviews.Count == 0)
+{
+    <p>No reviews yet.</p>
+}
+else
+{
+    @foreach (var rv in Model.Reviews)
+    {
+        <div class="border p-2 mb-2">
+            <strong>@rv.User?.DisplayName</strong> rated <strong>@rv.Rating</strong>/5
+            <p><em>@rv.Title</em></p>
+            <p>@rv.Body</p>
+        </div>
+    }
+}
+
+<h5>Add a Review</h5>
+<form method="post" asp-page-handler="AddReview">
+    <div class="mb-2">
+        <label asp-for="NewReview.UserID" class="form-label">User ID</label>
+        <input asp-for="NewReview.UserID" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label asp-for="NewReview.Rating" class="form-label">Rating</label>
+        <input asp-for="NewReview.Rating" class="form-control" type="number" min="1" max="5" />
+    </div>
+    <div class="mb-2">
+        <label asp-for="NewReview.Title" class="form-label">Title</label>
+        <input asp-for="NewReview.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label asp-for="NewReview.Body" class="form-label">Body</label>
+        <textarea asp-for="NewReview.Body" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>
+
