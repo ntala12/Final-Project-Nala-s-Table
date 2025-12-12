@@ -4,7 +4,60 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4 style="max-width:800px;">
+    <h1 class="text-center mb-4">Welcome to Nala's Table</h1>
+    <p class="lead text-center mt-3">
+    Discover delicious recipes, explore fresh ingredients, and share your own culinary creations.  
+    Nala’s Table is your place to cook, learn, and enjoy food together.
+    </p>
+
+
+    <!-- Bootstrap Carousel -->
+    <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#recipeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#recipeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#recipeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+        <div class="carousel-inner">
+
+            <!-- First slide -->
+            <div class="carousel-item active">
+                <img src="~/Images/SpaghettiCarbonara.jpg" class="d-block w-75 mx-auto" alt="SpaghettiCarbonara">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                    <h5>Spaghetti Carbonara</h5>
+                </div>
+            </div>
+
+            <!-- Second slide -->
+            <div class="carousel-item">
+                <img src="~/Images/LavaCake.jpg" class="d-block w-75 mx-auto" alt="Recipe 2">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                    <h5>Chocolate Lava Cake</h5>
+                </div>
+            </div>
+
+            <!-- Third slide -->
+            <div class="carousel-item">
+                <img src="~/Images/AvoToast.jpg" class="d-block w-75 mx-auto" alt="Recipe 3">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                    <h5>Avocado Toast</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <!-- Previous arrow -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+
+    <!-- Next arrow -->
+    <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+        </div>
 </div>

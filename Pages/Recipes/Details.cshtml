@@ -22,41 +22,83 @@
     </tbody>
 </table>
 
-<h4>Reviews</h4>
-@if (Model.Reviews.Count == 0)
+<h3 id="reviews">Reviews (@Model.Reviews.Count)</h3>
+
+@if (Model.Reviews.Any())
 {
-    <p>No reviews yet.</p>
+    <div class="list-group mb-4">
+        @foreach (var rv in Model.Reviews)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>@rv.Title</strong>
+                    <small class="text-muted">@rv.CreatedAt.ToLocalTime().ToString("g")</small>
+                </div>
+                <div>
+                    <small class="text-muted">
+                        by @(rv.ReviewerName ?? rv.User?.DisplayName ?? "Anonymous") • Rating: @rv.Rating
+                    </small>
+                </div>
+                <p class="mb-0 mt-2">@rv.Body</p>
+            </div>
+        }
+    </div>
 }
 else
 {
-    @foreach (var rv in Model.Reviews)
-    {
-        <div class="border p-2 mb-2">
-            <strong>@rv.User?.DisplayName</strong> rated <strong>@rv.Rating</strong>/5
-            <p><em>@rv.Title</em></p>
-            <p>@rv.Body</p>
-        </div>
-    }
+    <p class="text-muted">No reviews yet. Be the first to review this recipe.</p>
 }
 
-<h5>Add a Review</h5>
-<form method="post" asp-page-handler="AddReview">
+<hr />
+<h4>Leave a review</h4>
+
+<form method="post" asp-page-handler="AddReview" onsubmit="disableReviewSubmit(this)">
+    <input type="hidden" name="id" value="@Model.Recipe.RecipeID" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="mb-2">
-        <label asp-for="NewReview.UserID" class="form-label">User ID</label>
-        <input asp-for="NewReview.UserID" class="form-control" />
+        <label class="form-label">Your name</label>
+        <input asp-for="NewReview.ReviewerName" class="form-control" placeholder="Your name (optional)" maxlength="100" />
+        <span asp-validation-for="NewReview.ReviewerName" class="text-danger"></span>
     </div>
+
     <div class="mb-2">
-        <label asp-for="NewReview.Rating" class="form-label">Rating</label>
-        <input asp-for="NewReview.Rating" class="form-control" type="number" min="1" max="5" />
+        <label class="form-label">Rating</label>
+        <select asp-for="NewReview.Rating" class="form-select" required>
+            <option value="">Choose...</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select>
+        <span asp-validation-for="NewReview.Rating" class="text-danger"></span>
     </div>
+
     <div class="mb-2">
-        <label asp-for="NewReview.Title" class="form-label">Title</label>
-        <input asp-for="NewReview.Title" class="form-control" />
+        <label class="form-label">Title</label>
+        <input asp-for="NewReview.Title" class="form-control" maxlength="100" />
+        <span asp-validation-for="NewReview.Title" class="text-danger"></span>
     </div>
+
     <div class="mb-2">
-        <label asp-for="NewReview.Body" class="form-label">Body</label>
-        <textarea asp-for="NewReview.Body" class="form-control"></textarea>
+        <label class="form-label">Review</label>
+        <textarea asp-for="NewReview.Body" class="form-control" rows="4" maxlength="1000"></textarea>
+        <span asp-validation-for="NewReview.Body" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Submit Review</button>
+
+    <button id="reviewSubmitBtn" type="submit" class="btn btn-primary">Submit review</button>
 </form>
 
+@section Scripts {
+    <script>
+        function disableReviewSubmit(form) {
+            const btn = document.getElementById('reviewSubmitBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Submitting...';
+            }
+        }
+    </script>
+}

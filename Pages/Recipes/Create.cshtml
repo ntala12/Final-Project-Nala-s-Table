@@ -1,70 +1,121 @@
 @page
-@model Final_Project_Nala_s_Table.Pages_Recipes.CreateModel
+@model NalasTable.Pages.Recipes.CreateModel
+@{
+    ViewData["Title"] = "Create Recipe";
+}
 
-        @{
-        ViewData["Title"] = "Create";
-        }
-        
-        <h1>Create</h1>
-        
-    <h4>Recipe</h4>
-    <hr />
-    <div class="row">
-    <div class="col-md-4">
-    <form method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Recipe.Title" class="control-label"></label>
-                <input asp-for="Recipe.Title" class="form-control" aria-required="true"/>
-                <span asp-validation-for="Recipe.Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.Description" class="control-label"></label>
-                <input asp-for="Recipe.Description" class="form-control" />
-                <span asp-validation-for="Recipe.Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Recipe.Instructions" class="control-label"></label>
-                <input asp-for="Recipe.Instructions" class="form-control" aria-required="true"/>
-                <span asp-validation-for="Recipe.Instructions" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.Servings" class="control-label"></label>
-                <input asp-for="Recipe.Servings" class="form-control" />
-                <span asp-validation-for="Recipe.Servings" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.PrepTime" class="control-label"></label>
-                <input asp-for="Recipe.PrepTime" class="form-control" />
-                <span asp-validation-for="Recipe.PrepTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.CookTime" class="control-label"></label>
-                <input asp-for="Recipe.CookTime" class="form-control" />
-                <span asp-validation-for="Recipe.CookTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.ImageURL" class="control-label"></label>
-                <input asp-for="Recipe.ImageURL" class="form-control" />
-                <span asp-validation-for="Recipe.ImageURL" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recipe.CategoryID" class="control-label"></label>
-                <select asp-for="Recipe.CategoryID" class ="form-control" asp-items="ViewBag.CategoryID" ></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<h1>Create Recipe</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Title *</label>
+        <input asp-for="Input.Title" class="form-control" />
+        <span asp-validation-for="Input.Title" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <input asp-for="Input.Description" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Instructions *</label>
+        <textarea asp-for="Input.Instructions" class="form-control" rows="6"></textarea>
+        <span asp-validation-for="Input.Instructions" class="text-danger"></span>
+    </div>
+
+    <div class="row g-2 mb-3">
+        <div class="col-md-2">
+            <label class="form-label">Servings</label>
+            <input asp-for="Input.Servings" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">PrepTime</label>
+            <input asp-for="Input.PrepTime" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">CookTime</label>
+            <input asp-for="Input.CookTime" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">ImageURL</label>
+            <input asp-for="Input.ImageURL" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Category</label>
+            <select asp-for="Input.CategoryID" class="form-select">
+                <option value="0">Select category</option>
+                @foreach (var c in Model.CategoryOptions)
+                {
+                    <option value="@c.id" selected="@(Model.Input.CategoryID == c.id)">@c.name</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <h5>Ingredients</h5>
+    <table class="table" id="ingredientsTable">
+        <thead>
+            <tr><th>Name</th><th>Unit</th><th>Quantity</th><th></th></tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Input.Ingredients.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input name="Input.Ingredients[@i].Name" value="@Model.Input.Ingredients[i].Name" class="form-control" />
+                    </td>
+                    <td>
+                        <input name="Input.Ingredients[@i].Unit" value="@Model.Input.Ingredients[i].Unit" class="form-control" />
+                    </td>
+                    <td>
+                        <input name="Input.Ingredients[@i].Quantity" value="@Model.Input.Ingredients[i].Quantity" class="form-control" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)">Remove</button>
+                    </td>
+                </tr>
+            }
+            
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-secondary mb-3" onclick="addIngredientRow()">Add ingredient</button>
+    
+
+    <div>
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-page="./Index" class="btn btn-link">Back to List</a>
+    </div>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function addIngredientRow() {
+            const tbody = document.querySelector('#ingredientsTable tbody');
+            const index = tbody.children.length;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input name="Input.Ingredients[${index}].Name" class="form-control" /></td>
+                <td><input name="Input.Ingredients[${index}].Unit" class="form-control" /></td>
+                <td><input name="Input.Ingredients[${index}].Quantity" class="form-control" /></td>
+                <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)">Remove</button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRow(btn) {
+            const tr = btn.closest('tr');
+            tr.remove();
+            const rows = document.querySelectorAll('#ingredientsTable tbody tr');
+            rows.forEach((r, i) => {
+                r.querySelectorAll('input').forEach(input => {
+                    const name = input.getAttribute('name');
+const newName = name.replace(/Input\.Ingredients
+\[\d+\]
+/, `Input.Ingredients[${i}]`);
+    input.setAttribute('name', newName);
+                });
+            });
+        }
+    </script>
 }

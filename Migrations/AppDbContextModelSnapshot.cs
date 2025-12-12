@@ -165,11 +165,14 @@ namespace Final_Project_Nala_s_Table.Migrations
                     b.Property<int>("RecipeID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ReviewerName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserID")
+                    b.Property<int?>("UserID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ReviewID");
@@ -256,9 +259,7 @@ namespace Final_Project_Nala_s_Table.Migrations
 
                     b.HasOne("NalasTable.Models.User", "User")
                         .WithMany("Reviews")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserID");
 
                     b.Navigation("Recipe");
 

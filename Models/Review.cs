@@ -9,8 +9,9 @@ public class Review
     public int RecipeID { get; set; }
     public Recipe? Recipe { get; set; }
 
-    public int UserID { get; set; }
+    public int? UserID { get; set; }
     public User? User { get; set; }
+    public string? ReviewerName { get; set; }
 
     [Range(1, 5)]
     public int Rating { get; set; }

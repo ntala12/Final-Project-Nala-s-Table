@@ -1,89 +1,124 @@
 @page
 @model Final_Project_Nala_s_Table.Pages.Recipes.IndexModel
-
 @{
     ViewData["Title"] = "Recipes";
 }
 
-<h2 class="mb-3">Recipes</h2>
-
-<p>
-    <a class="btn btn-success" asp-page="Create">Create New Recipe</a>
-</p>
+<h1>Recipes</h1>
 
 <form method="get" class="row g-2 mb-3">
     <div class="col-md-4">
-        <input class="form-control" name="Search" value="@Model.Search" placeholder="Search title or ingredient" />
+        <input asp-for="Search" class="form-control" placeholder="Search title or ingredient" />
     </div>
-    <div class="col-md-3">
-        <select class="form-select" name="CategoryID">
-            <option value="">All categories</option>
+    <div class="col-md-2">
+        <select asp-for="CategoryID" class="form-select">
+            <option value="">All Categories</option>
             @foreach (var c in Model.CategoryOptions)
             {
-                <option value="@c.id" selected="@(Model.CategoryID == c.id ? "selected" : null)">@c.name</option>
+                <option value="@c.id" selected="@(Model.CategoryID == c.id)">@c.name</option>
             }
         </select>
     </div>
     <div class="col-md-2">
-        <input class="form-control" type="number" name="MaxPrep" value="@(Model.MaxPrep?.ToString())" placeholder="Max prep (min)" />
+        <input asp-for="MaxPrep" type="number" min="0" class="form-control" placeholder="Max prep (min)" />
     </div>
     <div class="col-md-2">
-        <select class="form-select" name="Sort">
-            <option value="newest" selected="@(Model.Sort=="newest" ? "selected" : null)">Newest</option>
-            <option value="rating" selected="@(Model.Sort=="rating" ? "selected" : null)">Rating</option>
-            <option value="preptime" selected="@(Model.Sort=="preptime" ? "selected" : null)">Prep time</option>
+        <select asp-for="Sort" class="form-select">
+            <option value="newest" selected="@(Model.Sort == "newest")">Newest</option>
+            <option value="rating" selected="@(Model.Sort == "rating")">Top rated</option>
+            <option value="preptime" selected="@(Model.Sort == "preptime")">Prep time</option>
         </select>
     </div>
-    <div class="col-md-1 d-grid">
-        <button class="btn btn-primary" type="submit">Apply</button>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success w-100">Apply</button>
     </div>
 </form>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-@foreach (var item in Model.Items)
-{
-    <div class="col">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">@item.Title</h5>
-                <p class="card-text mb-1">
-                    <span class="badge bg-secondary">@item.CategoryName</span>
-                </p>
-                <p class="card-text">
-                    <strong>Prep:</strong> @item.PrepTime min
-                    &nbsp;|&nbsp;
-                    <strong>Cook:</strong> @item.CookTime min
-                    &nbsp;|&nbsp;
-                    <strong>Rating:</strong> @(item.AvgRating.ToString("0.0"))
-                    <a asp-page="./Edit" asp-route-id="@item.RecipeID">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.RecipeID">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.RecipeID">Delete</a>
-                </p>
-            </div>
-            <div class="card-footer bg-white">
-                <a class="btn btn-outline-primary btn-sm" asp-page="Details" asp-route-id="@item.RecipeID">View</a>
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    @foreach (var item in Model.Items)
+    {
+        <div class="col">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(item.ImageURL))
+                {
+                    <img src="@item.ImageURL" class="card-img-top" alt="@item.Title" style="height:160px;object-fit:cover" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">
+                        <strong>@item.CategoryName</strong><br />
+                        Prep: @item.PrepTime min • Cook: @item.CookTime min<br />
+                        Rating: @item.AvgRating.ToString("0.0")
+                    </p>
+                    <a asp-page="./Details" asp-route-id="@item.RecipeID" class="btn btn-primary">View</a>
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
 </div>
 
-<nav class="mt-3">
-    <ul class="pagination">
-        <li class="page-item @(Model.PageIndex <= 1 ? "disabled" : "")">
-            <a class="page-link"
-               href="@(Url.Page(null, new { Search=Model.Search, CategoryID=Model.CategoryID, MaxPrep=Model.MaxPrep, Sort=Model.Sort, Page=Model.PageIndex-1 }))">
-               Prev
-            </a>
-        </li>
-        <li class="page-item disabled">
-            <span class="page-link">Page @Model.PageIndex of @Model.TotalPages</span>
-        </li>
-        <li class="page-item @(Model.PageIndex >= Model.TotalPages ? "disabled" : "")">
-            <a class="page-link"
-               href="@(Url.Page(null, new { Search=Model.Search, CategoryID=Model.CategoryID, MaxPrep=Model.MaxPrep, Sort=Model.Sort, Page=Model.PageIndex+1 }))">
-               Next
-            </a>
-        </li>
-    </ul>
-</nav>
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="./Index"
+                   asp-route-PageNumber="@(Model.PageNumber - 1)"
+                   asp-route-Search="@Model.Search"
+                   asp-route-CategoryID="@Model.CategoryID"
+                   asp-route-MaxPrep="@Model.MaxPrep"
+                   asp-route-Sort="@Model.Sort">Previous</a>
+            </li>
+
+            @{
+                var start = Math.Max(1, Model.PageNumber - 2);
+                var end = Math.Min(Model.TotalPages, Model.PageNumber + 2);
+                if (start > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-page="./Index" asp-route-PageNumber="1" asp-route-Search="@Model.Search" asp-route-CategoryID="@Model.CategoryID" asp-route-MaxPrep="@Model.MaxPrep" asp-route-Sort="@Model.Sort">1</a>
+                    </li>
+                    if (start > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+
+                for (int i = start; i <= end; i++)
+                {
+                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                        <a class="page-link"
+                           asp-page="./Index"
+                           asp-route-PageNumber="@i"
+                           asp-route-Search="@Model.Search"
+                           asp-route-CategoryID="@Model.CategoryID"
+                           asp-route-MaxPrep="@Model.MaxPrep"
+                           asp-route-Sort="@Model.Sort">@i</a>
+                    </li>
+                }
+
+                if (end < Model.TotalPages)
+                {
+                    if (end < Model.TotalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" asp-page="./Index" asp-route-PageNumber="@Model.TotalPages" asp-route-Search="@Model.Search" asp-route-CategoryID="@Model.CategoryID" asp-route-MaxPrep="@Model.MaxPrep" asp-route-Sort="@Model.Sort">@Model.TotalPages</a>
+                    </li>
+                }
+            }
+
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-page="./Index"
+                   asp-route-PageNumber="@(Model.PageNumber + 1)"
+                   asp-route-Search="@Model.Search"
+                   asp-route-CategoryID="@Model.CategoryID"
+                   asp-route-MaxPrep="@Model.MaxPrep"
+                   asp-route-Sort="@Model.Sort">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
